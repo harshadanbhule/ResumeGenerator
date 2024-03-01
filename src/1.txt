@@ -1,0 +1,88 @@
+import tkinter as tk
+from tkinter import ttk, filedialog, messagebox
+from fpdf import FPDF
+
+class ScrollableFrame(tk.Frame):
+    def __init__(self, container, *args, **kwargs):
+        super().__init__(container, *args, **kwargs)
+
+        self.canvas = tk.Canvas(self, bg="black", highlightthickness=0)
+        scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.scrollable_frame = tk.Frame(self.canvas, bg="black")
+
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(
+                scrollregion=self.canvas.bbox("all")
+            )
+        )
+
+        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        self.canvas.configure(yscrollcommand=scrollbar.set)
+
+        self.canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+    def update_scrollregion(self):
+        self.canvas.update_idletasks()
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+class MainWindow:
+    def __init__(self):
+        self.main = tk.Tk()
+        self.main_width = self.main.winfo_screenwidth()
+        self.main_height = self.main.winfo_screenheight()
+        self.main.title("PORTFOLIO")
+
+        self.main.geometry(f"{self.main_width}x{self.main_height}")
+        self.main.configure(bg="black")
+
+        self.label = tk.Label(self.main, text="P O R T F O L I O    G E N E R A T O R..", bg="black", fg="white", font=("Anurati", 54, "bold"))
+        self.label.pack(anchor='w')
+        self.label.place(x=5, y=400, anchor='w')
+
+        self.button1 = tk.Button(self.main, text="W A N T   Y O U R   O W N   P O R T F O L I O   ..?", bg="black", fg="white", font="Arial", command=self.button1_c)
+        self.button1.pack(anchor='w')
+        self.button1.place(x=5, y=500, anchor='w')
+
+        self.light_i = tk.PhotoImage(file="assets/mode__1_.png")
+        self.light_b = tk.Button(self.main, image=self.light_i, bg="white", width=50, height=50, command=self.light)
+        self.light_b.pack(side="right", anchor="ne")
+
+        self.home_frame = ScrollableFrame(self.main)
+        self.home_frame.propagate(False)
+
+    def light(self):
+        # Your existing light mode functionality here
+
+    def dark(self):
+        # Your existing dark mode functionality here
+
+    def button1_c(self):
+        # Your existing button1_c functionality here
+
+    def create_widgets(self):
+        # Your existing create_widgets functionality here
+
+        self.label14 = tk.Label(self.home_frame.scrollable_frame, text=".Personal Image.", bg="black", fg="white", font=("Poppins", 35, "bold"))
+        self.label14.pack(anchor='w', pady=50)
+
+        self.upload_button = tk.Button(self.home_frame.scrollable_frame, text="Upload Image", bg="black", fg="white", font=("Arial", 16), command=self.upload_image)
+        self.upload_button.pack(anchor='w')
+
+        self.image_label = tk.Label(self.home_frame.scrollable_frame)
+        self.image_label.pack(anchor='w', pady=10)
+
+    def upload_image(self):
+        filename = filedialog.askopenfilename(initialdir="/", title="Select Image File",
+                                              filetypes=(("Image Files", "*.jpg *.jpeg *.png *.gif"), ("All Files", "*.*")))
+        if filename:
+            image = tk.PhotoImage(file=filename)
+            self.image_label.config(image=image)
+            self.image_label.image = image  # Keeping a reference to the image to prevent garbage collection
+
+    def pdf_generate(self):
+        # Your existing pdf_generate functionality here
+
+app = MainWindow()
+app.main.mainloop()
